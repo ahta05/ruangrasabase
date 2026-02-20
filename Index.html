@@ -1,0 +1,669 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ruang Rasa - Modern Counseling UI</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            /* Palette Color Ruang Rasa */
+            --deep-teal: #005461;
+            --medium-teal: #0C7779;
+            --primary-teal: #249E94;
+            --light-teal: #3BC1A8;
+            
+            --hero-accent: #2D6BF5; /* Warna Utama Ilustrasi */
+
+            --bg: #F0F4F4;
+            --card-bg: #FFFFFF;
+            --text-main: #1A202C;
+            --text-muted: #4A5568;
+            --white: #FFFFFF;
+            --danger: #E53E3E;
+            --success: #38A169;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text-main);
+            font-family: 'Inter', sans-serif;
+            line-height: 1.6;
+            overflow-x: hidden;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .container {
+            max-width: 950px;
+            margin: 0 auto;
+            padding: 20px;
+            width: 100%;
+            flex: 1;
+        }
+
+        .hidden { display: none !important; }
+
+        /* Typography */
+        h1, h2, h3, .logo { font-family: 'Poppins', sans-serif; font-weight: 600; }
+
+        /* Header */
+        header { padding: 40px 20px 10px; text-align: center; }
+        .logo { font-size: 3rem; font-weight: 700; color: var(--deep-teal); letter-spacing: -1.5px; margin-bottom: 5px; line-height: 1; }
+        .tagline { font-size: 0.85rem; color: var(--primary-teal); text-transform: uppercase; letter-spacing: 3px; font-weight: 500; margin-bottom: 30px; }
+
+        /* Admin Trigger */
+        .admin-lock {
+            position: absolute; top: 25px; right: 25px;
+            background: var(--white); color: var(--deep-teal);
+            width: 44px; height: 44px;
+            display: flex; align-items: center; justify-content: center;
+            border-radius: 12px; cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            transition: all 0.3s ease;
+            z-index: 50;
+        }
+        .admin-lock:hover { transform: translateY(-2px); background: var(--deep-teal); color: var(--white); }
+
+        /* Buttons */
+        .btn {
+            padding: 14px 28px; border-radius: 12px; border: none; cursor: pointer;
+            font-weight: 600; font-size: 0.95rem; font-family: 'Poppins', sans-serif;
+            transition: all 0.3s ease; display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+        }
+        .btn-primary { background: linear-gradient(135deg, var(--deep-teal), var(--medium-teal)); color: var(--white); box-shadow: 0 4px 15px rgba(0, 84, 97, 0.2); }
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(0, 84, 97, 0.3); }
+        .btn-outline { border: 2px solid var(--medium-teal); color: var(--medium-teal); background: transparent; }
+        .btn-outline:hover { background: var(--medium-teal); color: var(--white); }
+        .btn-sm { padding: 6px 14px; font-size: 0.8rem; border-radius: 8px; }
+
+        /* Cards */
+        .card { background: var(--card-bg); border-radius: 20px; padding: 30px; box-shadow: 0 10px 30px rgba(0,0,0,0.04); margin-bottom: 25px; border: 1px solid rgba(0,0,0,0.02); }
+
+        /* Hero Section Layout */
+        .hero { padding: 10px 0 50px; }
+        
+        .hero-grid {
+            display: grid;
+            gap: 40px;
+            align-items: center;
+        }
+
+        /* Default Desktop Layout: Text Left, Image Right */
+        @media (min-width: 768px) {
+            .hero-grid { grid-template-columns: 1.1fr 0.9fr; }
+            .hero-text h2, .hero-text p { text-align: left; margin-left: 0; }
+            .hero-text { padding-right: 20px; }
+        }
+
+        /* MOBILE LAYOUT UPDATE: 
+           - Ilustrasi di bawah header (di atas teks) */
+        @media (max-width: 767px) {
+            .hero-grid {
+                grid-template-columns: 1fr; /* Satu kolom */
+            }
+            /* Gunakan order untuk memindahkan ilustrasi ke urutan pertama di grid */
+            .hero-illustration { order: 1; margin-bottom: 20px; }
+            .hero-text { order: 2; } /* Teks pindah ke bawah ilustrasi */
+        }
+
+        .hero h2 { font-size: 2rem; margin-bottom: 20px; color: var(--deep-teal); line-height: 1.2; text-align: center; }
+        .hero p { color: var(--text-muted); margin-bottom: 30px; font-size: 1rem; text-align: center; }
+
+        /* Feature List */
+        .feature-list { margin-top: 40px; display: grid; gap: 20px; }
+        .feature-item {
+            background: #F8FAFC; padding: 20px; border-radius: 16px; 
+            display: flex; align-items: flex-start; gap: 20px;
+            border-left: 4px solid var(--primary-teal);
+        }
+        .feature-icon { width: 40px; height: 40px; flex-shrink: 0; color: var(--primary-teal); }
+        .feature-text h4 { color: var(--deep-teal); font-size: 0.95rem; margin-bottom: 4px; }
+        .feature-text p { font-size: 0.85rem; color: var(--text-muted); margin: 0; text-align: left; }
+
+        /* Form Controls */
+        .form-group { margin-bottom: 20px; }
+        label { display: block; margin-bottom: 10px; font-weight: 600; color: var(--deep-teal); font-size: 0.9rem; font-family: 'Poppins', sans-serif; }
+        input, select, textarea {
+            width: 100%; padding: 14px; border: 2px solid #E2E8F0; border-radius: 12px;
+            font-size: 1rem; font-family: 'Inter', sans-serif; transition: all 0.2s; background: #FAFBFC;
+        }
+        input:focus, select:focus, textarea:focus { border-color: var(--primary-teal); outline: none; background: var(--white); box-shadow: 0 0 0 3px rgba(36, 158, 148, 0.1); }
+
+        /* Tabs Admin */
+        .tab-nav { display: flex; gap: 10px; margin-bottom: 25px; background: #E2E8F0; padding: 6px; border-radius: 16px; }
+        .tab-item { flex: 1; padding: 10px; text-align: center; cursor: pointer; border-radius: 12px; font-weight: 600; font-size: 0.9rem; color: var(--text-muted); transition: 0.2s; }
+        .tab-item.active { background: var(--white); color: var(--deep-teal); box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+
+        /* Table */
+        .table-container { overflow-x: auto; }
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 0.9rem; }
+        th { text-align: left; padding: 15px; border-bottom: 2px solid #F1F5F9; color: var(--text-muted); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.5px; }
+        td { padding: 15px; border-bottom: 1px solid #F1F5F9; vertical-align: middle; }
+
+        .status-pill { padding: 4px 12px; border-radius: 20px; font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
+        .pill-pending { background: #FFF5F5; color: var(--danger); }
+        .pill-confirmed { background: #F0FFF4; color: var(--success); }
+
+        /* Login Overlay */
+        #login-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 84, 97, 0.5); backdrop-filter: blur(6px);
+            display: flex; align-items: center; justify-content: center; z-index: 1000;
+        }
+
+        /* Success State */
+        .icon-circle {
+            width: 70px; height: 70px; background: #F0FFF4; color: var(--success);
+            border-radius: 50%; display: flex; align-items: center; justify-content: center;
+            font-size: 2.2rem; margin: 0 auto 20px;
+        }
+
+        /* Loading */
+        #loading-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(255,255,255,0.9); z-index: 2000;
+            display: flex; align-items: center; justify-content: center; flex-direction: column;
+        }
+        .spinner { width: 40px; height: 40px; border: 4px solid #E2E8F0; border-top: 4px solid var(--primary-teal); border-radius: 50%; animation: spin 1s linear infinite; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+        /* --- FOOTER (Single Line) --- */
+        footer {
+            background: var(--white);
+            border-top: 1px solid #E2E8F0;
+            padding: 25px 20px;
+            margin-top: auto;
+        }
+        .footer-content {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 20px;
+            font-family: 'Inter', sans-serif;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            width: 100%;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        .footer-divider { color: #CBD5E0; font-size: 0.8rem; }
+        
+        .social-link {
+            display: flex; align-items: center; gap: 6px;
+            text-decoration: none; color: var(--text-muted);
+            transition: color 0.2s;
+            font-weight: 500; font-size: 0.9rem;
+        }
+        .social-link:hover { color: var(--hero-accent); }
+        .social-link svg { width: 18px; height: 18px; }
+
+        /* --- HERO ILLUSTRATION (Chatting Bubbles) --- */
+        .hero-illustration {
+            width: 100%;
+            max-width: 400px;
+            margin: 0 auto;
+            position: relative;
+        }
+        .hero-illustration svg {
+            width: 100%;
+            height: auto;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Loading Overlay -->
+    <div id="loading-overlay" class="hidden">
+        <div class="spinner"></div>
+        <p style="margin-top: 15px; color: var(--deep-teal); font-weight: 500;">Memproses...</p>
+    </div>
+
+    <!-- Admin Trigger -->
+    <div class="admin-lock" onclick="openLogin()" title="Admin Login">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+            <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+        </svg>
+    </div>
+
+    <header>
+        <div class="logo">Ruang Rasa</div>
+        <div class="tagline">Teman Cerita Terpercaya</div>
+    </header>
+
+    <!-- PAGE 1: LANDING -->
+    <main id="landing-page" class="container">
+        <section class="hero">
+            <div class="hero-grid">
+                
+                <!-- TEXT SECTION -->
+                <div class="hero-text">
+                    <h2>Berbagi cerita,<br>berbagi rasa.</h2>
+                    <p>Hai Sobat Ruang Rasa. Gimana kabarnya nih? Lagi banyak hal yang dipikir atau dirasa, tapi bingung mau cerita dan curhat ke siapa? Tenang aja, disini Ruang Rasa hadir sebagai teman cerita yang bisa diandalkan.</p>
+                    <button class="btn btn-primary" onclick="showPage('form-page')">Daftar Sesi Sekarang</button>
+                    
+                    <div class="feature-list">
+                        <div class="feature-item">
+                            <div class="feature-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                                </svg>
+                            </div>
+                            <div class="feature-text">
+                                <h4>Privasi Terjamin</h4>
+                                <p>Setiap informasi dan cerita yang kamu sampaikan dienkripsi dan tidak akan dibagikan kepada siapapun.</p>
+                            </div>
+                        </div>
+                        <div class="feature-item">
+                            <div class="feature-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                                    <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                                </svg>
+                            </div>
+                            <div class="feature-text">
+                                <h4>Data Aman</h4>
+                                <p>Setiap data yang kamu berikan akan kami jaga keamanannya dengan penuh tanggungjawab.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- CHAT BUBBLES ILLUSTRATION -->
+                <div class="hero-illustration">
+                    <svg viewBox="0 0 400 350" xmlns="http://www.w3.org/2000/svg">
+                        <!-- Background Circle -->
+                        <circle cx="200" cy="175" r="150" fill="#F0F4F8" />
+
+                        <!-- Bubble 1: Received (Gray) -->
+                        <g transform="translate(40, 80)">
+                            <rect x="0" y="0" width="160" height="70" rx="20" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="2"/>
+                            <!-- Tail Bubble 1 -->
+                            <path d="M0,50 L-20,70 L20,50 Z" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="2"/>
+                            <!-- Dots inside Bubble 1 -->
+                            <circle cx="30" cy="35" r="6" fill="#CBD5E0"/>
+                            <circle cx="55" cy="35" r="6" fill="#CBD5E0"/>
+                            <circle cx="80" cy="35" r="6" fill="#CBD5E0"/>
+                        </g>
+
+                        <!-- Bubble 2: Sent (Blue Brand Color) -->
+                        <g transform="translate(140, 170)">
+                            <rect x="0" y="0" width="180" height="80" rx="25" fill="#2D6BF5"/>
+                            <!-- Tail Bubble 2 -->
+                            <path d="M160,0 L180,-20 L140,0 Z" fill="#2D6BF5"/>
+                            
+                            <!-- Heart Icon inside Bubble 2 -->
+                            <path d="M90,25 C90,25 75,15 65,25 C55,35 65,55 90,65 C115,55 125,35 115,25 C105,15 90,25 90,25" fill="#FFFFFF" transform="translate(0, -5) scale(0.8)"/>
+                            
+                            <!-- Text Lines mockup -->
+                            <rect x="20" y="25" width="40" height="6" rx="3" fill="white" opacity="0.7"/>
+                            <rect x="20" y="38" width="60" height="6" rx="3" fill="white" opacity="0.7"/>
+                        </g>
+
+                        <!-- Decoration Particles -->
+                        <circle cx="350" cy="100" r="6" fill="#2D6BF5" opacity="0.2"/>
+                        <circle cx="50" cy="280" r="8" fill="#249E94" opacity="0.1"/>
+                    </svg>
+                </div>
+
+            </div>
+        </section>
+    </main>
+
+    <!-- PAGE 2: FORM -->
+    <main id="form-page" class="container hidden">
+        <div class="card">
+            <h2 style="margin-bottom: 25px; color: var(--deep-teal); text-align: center;">Formulir Permintaan Layanan</h2>
+            <form id="clientForm" onsubmit="handleFormSubmit(event)">
+                <div class="form-group">
+                    <label>Nama Panggilan</label>
+                    <input type="text" name="nickname" placeholder="Mau pake nama samaran juga boleh..." required>
+                </div>
+                <div class="form-group">
+                    <label>Jenis Layanan</label>
+                    <select name="service" required>
+                        <option value="">Pilih Layanan yang nyaman buat kamu bercerita</option>
+                        <option value="Chat & Voicenote">Chat & Voicenote</option>
+                        <option value="Telpon">Telepon</option>
+                    </select>
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                    <div class="form-group">
+                        <label>Tanggal</label>
+                        <input type="date" name="date" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Waktu</label>
+                        <select name="time" required>
+                            <option value="20.00">20.00 WIB</option>
+                            <option value="21.00">21.00 WIB</option>
+                            <option value="22.00">22.00 WIB</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Harapan</label>
+                    <textarea name="message" rows="3" placeholder="Apa yang kamu harapakan dari layanan ini nantinya?"></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%;">Mari Bercerita</button>
+                <button type="button" class="btn btn-outline" style="width: 100%; margin-top: 12px;" onclick="showPage('landing-page')">Batal</button>
+
+                <p class="form-note">💰 Layanan ini dikenakan biaya seikhlasnya.</p>
+            </form>
+        </div>
+
+        <div id="success-state" class="card hidden" style="text-align: center;">
+            <div class="icon-circle">✓</div>
+            <h2 style="color: var(--deep-teal);">Permintaan Terkirim</h2>
+            <p style="color: var(--text-muted); margin: 20px 0;">Perminataan kamu sudah masuk ke sistem kami. Silakan langsung konfirmasi melalui WhatsApp ya.</p>
+            <a id="waLinkBtn" href="#" class="btn btn-primary" style="background: #25D366; width: 100%; border: none; text-decoration: none;">
+                Konfirmasi WhatsApp
+            </a>
+            <button class="btn btn-outline" style="width: 100%; margin-top: 15px;" onclick="location.reload()">Kembali ke Beranda</button>
+        </div>
+    </main>
+
+    <!-- PAGE 3: ADMIN DASHBOARD -->
+    <main id="admin-dashboard" class="container hidden">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;">
+            <h2 style="font-size: 1.5rem; color: var(--deep-teal);">Dashboard Admin</h2>
+            <button class="btn btn-sm btn-outline" onclick="showPage('landing-page')">Keluar</button>
+        </div>
+
+        <div class="tab-nav">
+            <div class="tab-item active" id="tab-clients" onclick="switchAdminTab('clients')">Daftar Klien</div>
+            <div class="tab-item" id="tab-holidays" onclick="switchAdminTab('holidays')">Pengaturan Libur</div>
+        </div>
+
+        <!-- Section: Clients -->
+        <div id="admin-clients-sec" class="card">
+            <div class="table-container">
+                <table id="clientTable">
+                    <thead>
+                        <tr>
+                            <th>Nama</th>
+                            <th>Layanan</th>
+                            <th>Jadwal</th>
+                            <th>Status</th>
+                            <th>Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody id="clientTableBody">
+                        <tr><td colspan="5" style="text-align:center;">Memuat data...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Section: Holidays -->
+        <div id="admin-holidays-sec" class="card hidden">
+            <h3 style="margin-bottom: 15px; color: var(--deep-teal); font-size: 1rem;">Tambah Tanggal Libur</h3>
+            <form onsubmit="handleAddHoliday(event)" style="display: flex; flex-direction: column; gap: 10px;">
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 10px;">
+                    <input type="date" id="holidayDate" required>
+                    <input type="time" id="holidayTime" required>
+                    <input type="text" id="holidayReason" placeholder="Alasan" required>
+                </div>
+                <button type="submit" class="btn btn-primary btn-sm" style="align-self: flex-start;">Simpan Jadwal Libur</button>
+            </form>
+
+            <div style="margin-top: 25px;">
+                <h4 style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 10px;">Daftar Libur Aktif:</h4>
+                <table style="margin-top: 10px;">
+                    <thead>
+                        <tr><th>Tanggal</th><th>Jam</th><th>Alasan</th><th>Hapus</th></tr>
+                    </thead>
+                    <tbody id="holidayTableBody"></tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+
+    <!-- LOGIN OVERLAY -->
+    <div id="login-overlay" class="hidden">
+        <div class="card" style="width: 320px; text-align: center; border: 2px solid var(--primary-teal);">
+            <h3 style="margin-bottom: 20px; color: var(--deep-teal);">Login Admin</h3>
+            <input type="password" id="adminPass" placeholder="Masukkan Password" style="margin-bottom: 15px; text-align: center;">
+            <button class="btn btn-primary" style="width: 100%;" onclick="checkLogin()">Masuk</button>
+            <button class="btn" style="margin-top: 10px; font-size: 0.8rem; color: var(--text-muted);" onclick="closeLogin()">Batal</button>
+        </div>
+    </div>
+
+    <!-- FOOTER -->
+    <footer>
+        <div class="footer-content">
+            <span>© 2026 Ruang Rasa</span>
+            <span class="footer-divider">•</span>
+            <span>Developed by Ahta</span>
+            <span class="footer-divider">•</span>
+            
+            <a href="https://instagram.com/_ahttaa" target="_blank" class="social-link">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
+                    <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
+                    <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
+                </svg>
+                Instagram
+            </a>
+            <a href="https://tiktok.com/@_ahttaaa" target="_blank" class="social-link">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M9 12a4 4 0 1 0 4 4V4a5 5 0 0 0 5 5"></path>
+                </svg>
+                TikTok
+            </a>
+        </div>
+    </footer>
+
+    <script>
+        // --- Navigation ---
+        function showPage(pageId) {
+            document.querySelectorAll('main').forEach(p => p.classList.add('hidden'));
+            document.getElementById(pageId).classList.remove('hidden');
+            window.scrollTo(0, 0);
+            if(pageId === 'admin-dashboard') loadAdminData();
+        }
+
+        function toggleLoading(show) {
+            const el = document.getElementById('loading-overlay');
+            if(show) el.classList.remove('hidden');
+            else el.classList.add('hidden');
+        }
+
+        // --- Client Form Logic ---
+        function handleFormSubmit(e) {
+            e.preventDefault();
+            toggleLoading(true);
+            
+            const form = e.target;
+            const data = {
+                nickname: form.nickname.value,
+                service: form.service.value,
+                date: form.date.value,
+                time: form.time.value,
+                message: form.message.value
+            };
+
+            google.script.run
+                .withSuccessHandler(function(response) {
+                    toggleLoading(false);
+                    if(response.success) {
+                        // --- LOGIKA TEMPLATE WA (OTOMATIS) ---
+                        // Format pesan yang akan muncul di WA
+                        const waMessage = `Halo min, saya ${data.nickname}. Saya sudah mengisi formulir untuk jadwal layanan Ruang Rasa pada tanggal ${data.date} jam ${data.time} (${data.service}). Mohon info selanjutnya ya.`;
+                        
+                        // Encode pesan agar bisa dibaca URL
+                        const encodedMessage = encodeURIComponent(waMessage);
+                        
+                        // Nomor WA Tujuan (GANTI dengan nomor Anda, format 628...)
+                        const adminNumber = "6283147445893"; 
+                        
+                        // Update link tombol WA
+                        document.getElementById('waLinkBtn').href = `https://wa.me/${adminNumber}?text=${encodedMessage}`;
+                        // ----------------------------------------
+
+                        form.closest('.card').classList.add('hidden');
+                        document.getElementById('success-state').classList.remove('hidden');
+                    } else {
+                        alert(response.error || "Terjadi kesalahan.");
+                    }
+                })
+                .withFailureHandler(function(err) {
+                    toggleLoading(false);
+                    alert("Error sistem: " + err.message);
+                })
+                .submitClientForm(data);
+        }
+
+        // --- Admin Login ---
+        function openLogin() {
+            document.getElementById('login-overlay').classList.remove('hidden');
+            document.getElementById('adminPass').focus();
+        }
+        function closeLogin() {
+            document.getElementById('login-overlay').classList.add('hidden');
+        }
+        function checkLogin() {
+            const pass = document.getElementById('adminPass').value;
+            toggleLoading(true);
+            google.script.run
+                .withSuccessHandler(function(isValid) {
+                    toggleLoading(false);
+                    if(isValid) {
+                        document.getElementById('adminPass').value = "";
+                        closeLogin();
+                        showPage('admin-dashboard');
+                    } else {
+                        alert("Password Salah!");
+                    }
+                })
+                .verifyPassword(pass);
+        }
+
+        function switchAdminTab(tab) {
+            document.getElementById('tab-clients').classList.toggle('active', tab === 'clients');
+            document.getElementById('tab-holidays').classList.toggle('active', tab === 'holidays');
+            document.getElementById('admin-clients-sec').classList.toggle('hidden', tab !== 'clients');
+            document.getElementById('admin-holidays-sec').classList.toggle('hidden', tab !== 'holidays');
+        }
+
+        // --- Data Loading ---
+        function loadAdminData() {
+            toggleLoading(true);
+            google.script.run
+                .withSuccessHandler(function(data) {
+                    renderClients(data.clients);
+                    renderHolidays(data.holidays);
+                    toggleLoading(false);
+                })
+                .withFailureHandler(function(err) {
+                    toggleLoading(false);
+                    alert("Gagal memuat: " + err.message);
+                })
+                .getAdminData();
+        }
+
+        function renderClients(clients) {
+            const tbody = document.getElementById('clientTableBody');
+            tbody.innerHTML = '';
+            if(clients.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;">Data kosong.</td></tr>';
+                return;
+            }
+            clients.forEach(c => {
+                const tr = document.createElement('tr');
+                tr.id = 'row-' + c.id;
+                let statusClass = c.status === 'Confirmed' ? 'pill-confirmed' : 'pill-pending';
+                let btnDisabled = c.status === 'Confirmed' ? 'disabled style="opacity:0.3"' : '';
+                let doneDisabled = c.status !== 'Confirmed' ? 'disabled style="background:#E2E8F0; color:#A0AEC0;"' : 'style="background:#249E94; color:white;"';
+
+                tr.innerHTML = `
+                    <td><b>${c.name}</b></td>
+                    <td>${c.service}</td>
+                    <td>${c.date}, ${c.time}</td>
+                    <td><span class="status-pill ${statusClass}" id="status-${c.id}">${c.status}</span></td>
+                    <td>
+                        <div style="display: flex; gap: 8px;" id="actions-${c.id}">
+                            <button class="btn btn-sm" style="background: var(--success); color:white;" ${btnDisabled} onclick="updateStatus('${c.id}', 'Confirmed')">OK</button>
+                            <button class="btn btn-sm" style="background: var(--danger); color:white;" ${btnDisabled} onclick="updateStatus('${c.id}', 'Cancelled')">X</button>
+                            <button class="btn btn-sm" ${doneDisabled} onclick="updateStatus('${c.id}', 'Done')">Selesai</button>
+                        </div>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function renderHolidays(holidays) {
+            const tbody = document.getElementById('holidayTableBody');
+            tbody.innerHTML = '';
+            holidays.forEach(h => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${h.date}</td>
+                    <td>${h.time}</td>
+                    <td>${h.reason}</td>
+                    <td><button style="color: var(--danger); border:none; background:none; cursor:pointer;" onclick="deleteHoliday('${h.timestamp}')">Hapus</button></td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function updateStatus(id, action) {
+            if(!confirm("Ubah status menjadi " + action + "?")) return;
+            toggleLoading(true);
+            google.script.run
+                .withSuccessHandler(() => {
+                    toggleLoading(false);
+                    if(action === 'Cancelled' || action === 'Done') {
+                        const row = document.getElementById('row-' + id);
+                        row.style.transition = "all 0.5s";
+                        row.style.opacity = "0";
+                        setTimeout(() => row.remove(), 500);
+                    } else {
+                        loadAdminData(); 
+                    }
+                })
+                .withFailureHandler(err => { toggleLoading(false); alert(err.message); })
+                .updateClientStatus(id, action);
+        }
+
+        function handleAddHoliday(e) {
+            e.preventDefault();
+            toggleLoading(true);
+            const data = {
+                date: document.getElementById('holidayDate').value,
+                time: document.getElementById('holidayTime').value,
+                reason: document.getElementById('holidayReason').value
+            };
+            google.script.run
+                .withSuccessHandler(() => {
+                    toggleLoading(false);
+                    document.getElementById('holidayDate').value = '';
+                    document.getElementById('holidayTime').value = '';
+                    document.getElementById('holidayReason').value = '';
+                    switchAdminTab('holidays');
+                    loadAdminData(); 
+                })
+                .withFailureHandler(err => { toggleLoading(false); alert(err.message); })
+                .addHoliday(data);
+        }
+
+        function deleteHoliday(ts) {
+            if(!confirm("Hapus jadwal libur ini?")) return;
+            toggleLoading(true);
+            google.script.run
+                .withSuccessHandler(() => {
+                    toggleLoading(false);
+                    loadAdminData();
+                })
+                .deleteHolidayByTimestamp(ts);
+        }
+    </script>
+</body>
+</html>
